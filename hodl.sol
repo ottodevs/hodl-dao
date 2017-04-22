@@ -179,7 +179,7 @@ contract HodlDAO {
         return reward;
     }
 
-/** calculate the fee for quick withdrawal.
+/** calculate the fee for quick withdrawal
  */
     function calculateFee(uint256 v) constant returns  (uint256) {
         uint256 feeRequired = v / (1 wei * 100);
@@ -199,11 +199,14 @@ contract HodlDAO {
         if (msg.value < feeRequired) throw; // not enough fees sent
         uint256 overAmount = msg.value - feeRequired; // calculate any over-payment
     // add fee to the feePot, excluding any over-payment
+
         if (overAmount > 0) {
             feePot += msg.value - overAmount;
+        } else {
+            feePot += msg.value;
         }
         LogString("quickWithdraw");
-        doWithdrawal(overAmount); // no reward for you!
+        doWithdrawal(overAmount); // withdraw + return any over payment
     }
 
 /**
