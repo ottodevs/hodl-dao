@@ -27,7 +27,7 @@ contract HodlDAO {
     struct withdrawalRequest {
     uint sinceBlock;
     uint256 amount;
-}
+    }
 
     /**
      * feePot collects fees from quick withdrawals. This gets re-distributed to slow-withdrawals
@@ -149,7 +149,7 @@ contract HodlDAO {
      *
      * Gas 64490
      *
-     */
+    */
     function withdrawalInitiate() notPendingWithdrawal {
         WithdrawalStarted(msg.sender, balanceOf[msg.sender]);
         withdrawalRequests[msg.sender] = withdrawalRequest(block.number, balanceOf[msg.sender]);
@@ -162,7 +162,7 @@ contract HodlDAO {
      * amount held when the withdrawal request was made.
      *
      * Gas: 125579
-     */
+    */
     function withdrawalComplete() returns (bool) {
         withdrawalRequest r = withdrawalRequests[msg.sender];
         if (r.sinceBlock == 0) throw;
@@ -212,17 +212,17 @@ contract HodlDAO {
      * Gas use: 84235 (including call to processWithdrawal)
     */
     function quickWithdraw() payable notPendingWithdrawal returns (bool) {
-        // calculate required fee
+    // calculate required fee
         uint256 amount = balanceOf[msg.sender];
         if (amount <= 0) throw;
         uint256 feeRequired = calculateFee(amount);
         if (msg.value < feeRequired) {
-            // not enough fees sent
+        // not enough fees sent
             InsufficientFee(msg.sender, feeRequired);
             return false;
         }
         uint256 overAmount = msg.value - feeRequired; // calculate any over-payment
-        // add fee to the feePot, excluding any over-payment
+    // add fee to the feePot, excluding any over-payment
 
         if (overAmount > 0) {
             feePot += msg.value - overAmount;
@@ -255,7 +255,7 @@ contract HodlDAO {
 
 
     /**
-     * Fallback function when sending ether to the contract
+    * Fallback function when sending ether to the contract
      * Gas use: 1086390
     */
     function () payable notPendingWithdrawal {
@@ -263,7 +263,6 @@ contract HodlDAO {
         if (amount <= 0) throw; // need to send some ETH
         balanceOf[msg.sender] += amount; // mint new tokens
         totalSupply += amount; // track the supply
-        LogString("fallback");
         Transfer(0, msg.sender, amount); // notify of the event
         Deposited(msg.sender, amount);
     }
